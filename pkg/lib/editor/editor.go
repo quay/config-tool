@@ -114,7 +114,7 @@ func downloadConfig(configPath string) func(http.ResponseWriter, *http.Request) 
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
-			w.WriteHeader(404)
+			w.WriteHeader(405)
 			return
 		}
 
@@ -179,7 +179,7 @@ func configValidator(configPath string) func(http.ResponseWriter, *http.Request)
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Method != "POST" {
-			w.WriteHeader(404)
+			w.WriteHeader(405)
 			return
 		}
 
@@ -222,7 +222,7 @@ func configValidator(configPath string) func(http.ResponseWriter, *http.Request)
 func configHandler(configPath string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
-			w.WriteHeader(404)
+			w.WriteHeader(405)
 			return
 		}
 
