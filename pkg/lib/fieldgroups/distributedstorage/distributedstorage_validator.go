@@ -37,6 +37,7 @@ func (fg *DistributedStorageFieldGroup) Validate(opts shared.Options) []shared.V
 				Message:    "FEATURE_STORAGE_REPLICATION is not supported by LocalStorage.",
 			}
 			errors = append(errors, newError)
+			continue
 		}
 
 		if ok, err := shared.ValidateMinioStorage(opts, storageConf.Args, "DistributedStorage"); !ok {
