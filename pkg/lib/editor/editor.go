@@ -22,7 +22,7 @@ import (
 	shared "github.com/quay/config-tool/pkg/lib/shared"
 )
 
-const port = 8080
+const port = 8443
 const editorUsername = "quayconfig"
 
 func handler(staticContentPath, operatorEndpoint string) func(w http.ResponseWriter, r *http.Request) {
@@ -44,15 +44,6 @@ func handler(staticContentPath, operatorEndpoint string) func(w http.ResponseWri
 
 // commitToOperator calls API endpoint on Quay Operator to create a new `Secret`.
 func commitToOperator(configPath, operatorEndpoint string) func(w http.ResponseWriter, r *http.Request) {
-	namespace := os.Getenv("MY_POD_NAMESPACE")
-	if namespace == "" {
-		panic("missing 'MY_POD_NAMESPACE'")
-	}
-	podName := os.Getenv("MY_POD_NAME")
-	if podName == "" {
-		panic("missing 'MY_POD_NAME'")
-	}
-	quayRegistryName := strings.Split(podName, "-quay-config-editor")[0]
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
@@ -70,6 +61,16 @@ func commitToOperator(configPath, operatorEndpoint string) func(w http.ResponseW
 		for name, cert := range shared.LoadCerts(configPath) {
 			certStore[name] = cert
 		}
+
+		namespace := os.Getenv("MY_POD_NAMESPACE")
+		if namespace == "" {
+			panic("missing 'MY_POD_NAMESPACE'")
+		}
+		podName := os.Getenv("MY_POD_NAME")
+		if podName == "" {
+			panic("missing 'MY_POD_NAME'")
+		}
+		quayRegistryName := strings.Split(podName, "-quay-config-editor")[0]
 
 		// TODO: Define struct type for this with correct `yaml` tags
 		preSecret := map[string]interface{}{
