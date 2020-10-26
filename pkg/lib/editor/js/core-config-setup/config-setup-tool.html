@@ -1310,7 +1310,7 @@
               </div>
 
               <div class="co-alert co-alert-warning"
-                   ng-if="config.FEATURE_GITHUB_LOGIN && config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken' && !config.GITHUB_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
+                   ng-if="config.FEATURE_GITHUB_LOGIN && config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE == 'LDAP' && !config.GITHUB_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
                 Warning: This provider is not bound to your <strong>{{ config.AUTHENTICATION_TYPE }}</strong>
                 authentication. Logging in via this provider will create a <strong><span
                                                                                      class="registry-name"></span>-only user</strong>, which is not the recommended approach. It is
@@ -1372,7 +1372,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr ng-if="config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken'">
+                <tr ng-if="config.AUTHENTICATION_TYPE == 'LDAP'">
                   <td>Binding Field:</td>
                   <td>
                     <select class="form-control" ng-model="config.GITHUB_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
@@ -1426,7 +1426,7 @@
               </div>
 
               <div class="co-alert co-alert-warning"
-                   ng-if="config.FEATURE_GOOGLE_LOGIN && config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken' && !config.GOOGLE_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
+                   ng-if="config.FEATURE_GOOGLE_LOGIN && config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE == 'LDAP' && !config.GOOGLE_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
                 Warning: This provider is not bound to your <strong>{{ config.AUTHENTICATION_TYPE }}</strong>
                 authentication. Logging in via this provider will create a <strong><span
                                                                                      class="registry-name"></span>-only user</strong>, which is not the recommended approach. It is
@@ -1448,7 +1448,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr ng-if="config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken'">
+                <tr ng-if="config.AUTHENTICATION_TYPE == 'LDAP'">
                   <td>Binding Field:</td>
                   <td>
                     <select class="form-control" ng-model="config.GOOGLE_LOGIN_CONFIG.LOGIN_BINDING_FIELD">
@@ -1488,7 +1488,7 @@
             </div>
             <div class="co-panel-body">
               <div class="co-alert co-alert-warning"
-                   ng-if="config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken' && !(config[provider].LOGIN_BINDING_FIELD)">
+                   ng-if="config.AUTHENTICATION_TYPE && config.AUTHENTICATION_TYPE == 'LDAP' && !(config[provider].LOGIN_BINDING_FIELD)">
                 Warning: This OIDC provider is not bound to your <strong>{{ config.AUTHENTICATION_TYPE }}</strong>
                 authentication. Logging in via this provider will create a <strong><span
                                                                                      class="registry-name"></span>-only user</strong>, which is not the recommended approach. It is
@@ -1574,7 +1574,7 @@
                     </div>
                   </td>
                 </tr>
-                <tr ng-if="config.AUTHENTICATION_TYPE != 'Database' && config.AUTHENTICATION_TYPE != 'AppToken'">
+                <tr ng-if="config.AUTHENTICATION_TYPE == 'LDAP'">
                   <td>Binding Field:</td>
                   <td>
                     <select class="form-control" ng-model="config[provider].LOGIN_BINDING_FIELD">
