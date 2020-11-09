@@ -37,4 +37,13 @@ type DistributedStorageArgs struct {
 	AzureAccountName string `default:"" validate:"" json:"azure_account_name,omitempty" yaml:"azure_account_name,omitempty"`
 	AzureAccountKey  string `default:"" validate:"" json:"azure_account_key,omitempty" yaml:"azure_account_key,omitempty"`
 	SASToken         string `default:"" validate:"" json:"sas_token,omitempty" yaml:"sas_token,omitempty"`
+	// Args for SwiftStorage
+	SwiftAuthVersion int                    `default:"" validate:"" json:"auth_version,omitempty" yaml:"auth_version,omitempty"`
+	SwiftAuthURL     string                 `default:"" validate:"" json:"auth_url,omitempty" yaml:"auth_url,omitempty"`
+	SwiftContainer   string                 `default:"" validate:"" json:"swift_container,omitempty" yaml:"swift_container,omitempty"`
+	SwiftUser        string                 `default:"" validate:"" json:"swift_user,omitempty" yaml:"swift_user,omitempty"`
+	SwiftPassword    string                 `default:"" validate:"" json:"swift_password,omitempty" yaml:"swift_password,omitempty"`
+	SwiftCaCertPath  string                 `default:"" validate:"" json:"ca_cert_path,omitempty" yaml:"ca_cert_path,omitempty"`
+	SwiftTempURLKey  string                 `default:"" validate:"" json:"temp_url_key,omitempty" yaml:"temp_url_key,omitempty"`
+	SwiftOsOptions   map[string]interface{} `default:"" validate:"" json:"os_options,omitempty" yaml:"os_options,omitempty"`
 }
