@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/ncw/swift"
+	"github.com/ncw/swift/v2"
 )
 
 // ValidateStorage will validate a S3 storage connection.
@@ -439,6 +439,7 @@ func validateAzureGateway(opts Options, storageName, accountName, accountKey, co
 func validateSwift(opts Options, storageName string, authVersion int, swiftUser, swiftPassword, containerName, authUrl string, osOptions map[string]interface{}, fgName string) (bool, ValidationError) {
 
 	var c swift.Connection
+	ctx := context.Background()
 	switch authVersion {
 	case 1:
 		c = swift.Connection{
@@ -484,7 +485,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 		}
 	}
 
-	err := c.Authenticate()
+	err := c.Authenticate(ctx)
 	if err != nil {
 		return false, ValidationError{
 			FieldGroup: fgName,
@@ -494,7 +495,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 	}
 
 	// List containers
-	containers, err := c.ContainerNames(nil)
+	containers, err := c.ContainerNames(ctx, nil)
 	if err != nil {
 		return false, ValidationError{
 			FieldGroup: fgName,
