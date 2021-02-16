@@ -440,6 +440,12 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 
 	var c swift.Connection
 	ctx := context.Background()
+	var region string
+	var ok bool
+	if region, ok = osOptions["region_name"].(string); ok {
+		region = osOptions["region_name"].(string)
+	}
+
 	switch authVersion {
 	case 1:
 		c = swift.Connection{
@@ -454,6 +460,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 			ApiKey:      swiftPassword,
 			AuthUrl:     authUrl,
 			AuthVersion: 2,
+			Region:      region,
 		}
 	case 3:
 
@@ -482,6 +489,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 			AuthVersion: 3,
 			Domain:      domain,
 			TenantId:    tenantId,
+			Region:      region,
 		}
 	}
 
