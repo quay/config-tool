@@ -40,6 +40,8 @@ func TestValidateDatabase(t *testing.T) {
 
 			opts := shared.Options{
 				Mode: "testing",
+				// FIXME(alecmerdler): Test TLS
+				Certificates: nil,
 			}
 
 			validationErrors := fg.Validate(opts)

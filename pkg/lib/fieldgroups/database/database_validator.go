@@ -108,6 +108,7 @@ func ValidateDatabaseConnection(opts shared.Options, uri *url.URL, caCert string
 				return errors.New("Could not add CA cert to pool")
 			}
 			tlsConfig := &tls.Config{
+				ServerName:         strings.Split(fullHostName, ":")[0],
 				InsecureSkipVerify: false,
 				RootCAs:            caCertPool,
 			}
@@ -136,7 +137,7 @@ func ValidateDatabaseConnection(opts shared.Options, uri *url.URL, caCert string
 	} else if scheme == "postgresql" {
 
 		// If there is no port, add 5432 as default
-		_, _, err := net.SplitHostPort(fullHostName)
+		host, _, err := net.SplitHostPort(fullHostName)
 		if err != nil {
 			fullHostName = fullHostName + ":5432"
 		}
@@ -160,6 +161,7 @@ func ValidateDatabaseConnection(opts shared.Options, uri *url.URL, caCert string
 				return errors.New("Could not add CA cert to pool")
 			}
 			tlsConfig := &tls.Config{
+				ServerName:         host,
 				InsecureSkipVerify: false,
 				RootCAs:            caCertPool,
 			}
