@@ -940,6 +940,65 @@
       "ct-validate": "",
       "ct-fieldgroups": ["Redis"]
     },
+    "DATA_MODEL_CACHE_CONFIG": {
+      "required": ["engine", "host"],
+      "type": "object",
+      "description": "Config information for caching data model requests",
+      "properties": {
+        "endpoint": {
+          "x-example": "127.0.0.1",
+          "type": "string",
+          "description": "The host/port where memcached is accessible",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "host": {
+          "x-example": "my.redis.cluster",
+          "type": "string",
+          "description": "The hostname at which Redis is accessible",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "password": {
+          "x-example": "mypassword",
+          "type": "string",
+          "description": "The password to connect to the Redis instance",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "port": {
+          "x-example": 1234,
+          "type": "number",
+          "description": "The port at which Redis is accessible",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "db": {
+          "x-example": "0",
+          "type": "string",
+          "description": "The name of the specific Redis database",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "ca_cert": {
+          "x-example": "/path/to/file",
+          "type": "string",
+          "description": "The absolute path to the CA certificate used by the Redis server.",
+          "ct-default": "",
+          "ct-validate": ""
+        },
+        "ssl": {
+          "x-example": false,
+          "type": "boolean",
+          "description": "Whether the connection should be made using HTTPS",
+          "ct-default": false,
+          "ct-validate": ""
+        }
+      },
+      "ct-default": "",
+      "ct-validate": "",
+      "ct-fieldgroups": ["DataModelCache"]
+    },
     "SIGNING_ENGINE": {
       "x-example": "gpg2",
       "enum": ["gpg2"],
