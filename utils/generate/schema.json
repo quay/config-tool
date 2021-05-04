@@ -469,6 +469,12 @@
       "ct-validate": "",
       "ct-fieldgroups": ["Database"]
     },
+    "DB_CONNECTION_POOLING": {
+      "type": "boolean",
+      "description": "If true, uses peewee's connection pool. This can also be set as an environment variable. If an environment variable is set, it takes precedence over the configuration flag.",
+      "ct-default": "true",
+      "ct-validate": ""
+    },
     "LOGS_MODEL": {
       "x-example": "database",
       "enum": ["database", "transition_reads_both_writes_es", "elasticsearch"],

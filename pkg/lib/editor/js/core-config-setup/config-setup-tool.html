@@ -231,6 +231,14 @@
                 <div class="help-text">Optional SSL certicate (in PEM format) to use to connect to the database</div>
               </td>
             </tr>
+	    <tr ng-show="mapped.database.kind">
+	      <div class="config-bool-field" binding="config.DB_CONNECTION_POOLING">
+                Enable database connection pooling.
+		<div class="help-text">
+		  If enabled, uses an instance-local connection pool.
+		</div>
+	      </div>
+	    </tr>
           </table>
         </div>    
       </div>
