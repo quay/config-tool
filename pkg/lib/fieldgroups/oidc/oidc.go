@@ -9,19 +9,19 @@ import (
 
 // OIDC represents the OIDC config fields
 type OIDCFieldGroup struct {
-	OIDCProviders []*OIDCProvider `default:"[]" validate:"" json:"-" yaml:"-"`
+	OIDCProviders []*OIDCProvider `default:"[]"  json:"-" yaml:"-"`
 }
 
 type OIDCProvider struct {
-	_Prefix                    string        `default:"" validate:"" json:"-" yaml:"-"`
-	OIDCServer                 string        `default:"" validate:"" json:"OIDC_SERVER,omitempty" yaml:"OIDC_SERVER,omitempty"`
-	ClientID                   string        `default:"" validate:"" json:"CLIENT_ID,omitempty" yaml:"CLIENT_ID,omitempty"`
-	ClientSecret               string        `default:"" validate:"" json:"CLIENT_SECRET,omitempty" yaml:"CLIENT_SECRET,omitempty"`
-	ServiceIcon                string        `default:"" validate:"" json:"SERVICE_ICON,omitempty" yaml:"SERVICE_ICON,omitempty"`
-	VerifiedEmailClaimName     string        `default:"" validate:"" json:"VERIFIED_EMAIL_CLAIM_NAME,omitempty" yaml:"VERIFIED_EMAIL_CLAIM_NAME,omitempty"`
-	PreferredUsernameClaimName string        `default:"" validate:"" json:"PREFERRED_USERNAME_CLAIM_NAME,omitempty" yaml:"PREFERRED_USERNAME_CLAIM_NAME,omitempty"`
-	LoginScopes                []interface{} `default:"" validate:"" json:"LOGIN_SCOPES,omitempty" yaml:"LOGIN_SCOPES,omitempty"`
-	ServiceName                string        `default:"" validate:"" json:"SERVICE_NAME,omitempty" yaml:"SERVICE_NAME,omitempty"`
+	_Prefix                    string        `default:""  json:"-" yaml:"-"`
+	OIDCServer                 string        `default:""  json:"OIDC_SERVER,omitempty" yaml:"OIDC_SERVER,omitempty"`
+	ClientID                   string        `default:""  json:"CLIENT_ID,omitempty" yaml:"CLIENT_ID,omitempty"`
+	ClientSecret               string        `default:""  json:"CLIENT_SECRET,omitempty" yaml:"CLIENT_SECRET,omitempty"`
+	ServiceIcon                string        `default:""  json:"SERVICE_ICON,omitempty" yaml:"SERVICE_ICON,omitempty"`
+	VerifiedEmailClaimName     string        `default:""  json:"VERIFIED_EMAIL_CLAIM_NAME,omitempty" yaml:"VERIFIED_EMAIL_CLAIM_NAME,omitempty"`
+	PreferredUsernameClaimName string        `default:""  json:"PREFERRED_USERNAME_CLAIM_NAME,omitempty" yaml:"PREFERRED_USERNAME_CLAIM_NAME,omitempty"`
+	LoginScopes                []interface{} `default:""  json:"LOGIN_SCOPES,omitempty" yaml:"LOGIN_SCOPES,omitempty"`
+	ServiceName                string        `default:""  json:"SERVICE_NAME,omitempty" yaml:"SERVICE_NAME,omitempty"`
 }
 
 // NewOIDCFieldGroup creates a new OIDCFieldGroup

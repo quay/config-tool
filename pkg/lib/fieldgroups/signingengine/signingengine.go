@@ -1,18 +1,18 @@
 package signingengine
 
 import (
-	"errors"
-
 	"github.com/creasty/defaults"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 // SigningEngineFieldGroup represents the SigningEngineFieldGroup config fields
 type SigningEngineFieldGroup struct {
-	FeatureSigning         bool   `default:"false" validate:"" json:"FEATURE_SIGNING" yaml:"FEATURE_SIGNING"`
-	Gpg2PrivateKeyFilename string `default:"signing-private.gpg" validate:"" json:"GPG2_PRIVATE_KEY_FILENAME,omitempty" yaml:"GPG2_PRIVATE_KEY_FILENAME,omitempty"`
-	Gpg2PrivateKeyName     string `default:"" validate:"" json:"GPG2_PRIVATE_KEY_NAME,omitempty" yaml:"GPG2_PRIVATE_KEY_NAME,omitempty"`
-	Gpg2PublicKeyFilename  string `default:"signing-public.gpg" validate:"" json:"GPG2_PUBLIC_KEY_FILENAME,omitempty" yaml:"GPG2_PUBLIC_KEY_FILENAME,omitempty"`
-	SigningEngine          string `default:"" validate:"" json:"SIGNING_ENGINE,omitempty" yaml:"SIGNING_ENGINE,omitempty"`
+	FeatureSigning         bool   `default:"false"  json:"FEATURE_SIGNING" yaml:"FEATURE_SIGNING"`
+	Gpg2PrivateKeyFilename string `default:"signing-private.gpg"  json:"GPG2_PRIVATE_KEY_FILENAME,omitempty" yaml:"GPG2_PRIVATE_KEY_FILENAME,omitempty"`
+	Gpg2PrivateKeyName     string `default:""  json:"GPG2_PRIVATE_KEY_NAME,omitempty" yaml:"GPG2_PRIVATE_KEY_NAME,omitempty"`
+	Gpg2PublicKeyFilename  string `default:"signing-public.gpg"  json:"GPG2_PUBLIC_KEY_FILENAME,omitempty" yaml:"GPG2_PUBLIC_KEY_FILENAME,omitempty"`
+	SigningEngine          string `default:""  json:"SIGNING_ENGINE,omitempty" yaml:"SIGNING_ENGINE,omitempty"`
 }
 
 // NewSigningEngineFieldGroup creates a new SigningEngineFieldGroup
@@ -20,35 +20,16 @@ func NewSigningEngineFieldGroup(fullConfig map[string]interface{}) (*SigningEngi
 	newSigningEngineFieldGroup := &SigningEngineFieldGroup{}
 	defaults.Set(newSigningEngineFieldGroup)
 
-	if value, ok := fullConfig["GPG2_PRIVATE_KEY_FILENAME"]; ok {
-		newSigningEngineFieldGroup.Gpg2PrivateKeyFilename, ok = value.(string)
-		if !ok {
-			return newSigningEngineFieldGroup, errors.New("GPG2_PRIVATE_KEY_FILENAME must be of type string")
-		}
+	bytes, err := yaml.Marshal(fullConfig)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil, err
 	}
-	if value, ok := fullConfig["GPG2_PRIVATE_KEY_NAME"]; ok {
-		newSigningEngineFieldGroup.Gpg2PrivateKeyName, ok = value.(string)
-		if !ok {
-			return newSigningEngineFieldGroup, errors.New("GPG2_PRIVATE_KEY_NAME must be of type string")
-		}
-	}
-	if value, ok := fullConfig["GPG2_PUBLIC_KEY_FILENAME"]; ok {
-		newSigningEngineFieldGroup.Gpg2PublicKeyFilename, ok = value.(string)
-		if !ok {
-			return newSigningEngineFieldGroup, errors.New("GPG2_PUBLIC_KEY_FILENAME must be of type string")
-		}
-	}
-	if value, ok := fullConfig["SIGNING_ENGINE"]; ok {
-		newSigningEngineFieldGroup.SigningEngine, ok = value.(string)
-		if !ok {
-			return newSigningEngineFieldGroup, errors.New("SIGNING_ENGINE must be of type string")
-		}
-	}
-	if value, ok := fullConfig["FEATURE_SIGNING"]; ok {
-		newSigningEngineFieldGroup.FeatureSigning, ok = value.(bool)
-		if !ok {
-			return newSigningEngineFieldGroup, errors.New("FEATURE_SIGNING must be of type boolean")
-		}
+
+	err = yaml.Unmarshal(bytes, newSigningEngineFieldGroup)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil, err
 	}
 
 	return newSigningEngineFieldGroup, nil

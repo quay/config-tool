@@ -1,17 +1,17 @@
 package actionlogarchiving
 
 import (
-	"errors"
-
 	"github.com/creasty/defaults"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 // ActionLogArchivingFieldGroup represents the ActionLogArchivingFieldGroup config fields
 type ActionLogArchivingFieldGroup struct {
-	ActionLogArchiveLocation string                          `default:"" validate:"" json:"ACTION_LOG_ARCHIVE_LOCATION,omitempty" yaml:"ACTION_LOG_ARCHIVE_LOCATION,omitempty"`
-	ActionLogArchivePath     string                          `default:"" validate:"" json:"ACTION_LOG_ARCHIVE_PATH,omitempty" yaml:"ACTION_LOG_ARCHIVE_PATH,omitempty"`
-	DistributedStorageConfig *DistributedStorageConfigStruct `default:"" validate:"" json:"DISTRIBUTED_STORAGE_CONFIG,omitempty" yaml:"DISTRIBUTED_STORAGE_CONFIG,omitempty"`
-	FeatureActionLogRotation bool                            `default:"false" validate:"" json:"FEATURE_ACTION_LOG_ROTATION" yaml:"FEATURE_ACTION_LOG_ROTATION"`
+	ActionLogArchiveLocation string                          `default:""  json:"ACTION_LOG_ARCHIVE_LOCATION,omitempty" yaml:"ACTION_LOG_ARCHIVE_LOCATION,omitempty"`
+	ActionLogArchivePath     string                          `default:""  json:"ACTION_LOG_ARCHIVE_PATH,omitempty" yaml:"ACTION_LOG_ARCHIVE_PATH,omitempty"`
+	DistributedStorageConfig *DistributedStorageConfigStruct `default:""  json:"DISTRIBUTED_STORAGE_CONFIG,omitempty" yaml:"DISTRIBUTED_STORAGE_CONFIG,omitempty"`
+	FeatureActionLogRotation bool                            `default:"false"  json:"FEATURE_ACTION_LOG_ROTATION" yaml:"FEATURE_ACTION_LOG_ROTATION"`
 }
 
 // DistributedStorageConfigStruct represents the DistributedStorageConfig struct
@@ -22,31 +22,16 @@ func NewActionLogArchivingFieldGroup(fullConfig map[string]interface{}) (*Action
 	newActionLogArchivingFieldGroup := &ActionLogArchivingFieldGroup{}
 	defaults.Set(newActionLogArchivingFieldGroup)
 
-	if value, ok := fullConfig["ACTION_LOG_ARCHIVE_LOCATION"]; ok {
-		newActionLogArchivingFieldGroup.ActionLogArchiveLocation, ok = value.(string)
-		if !ok {
-			return newActionLogArchivingFieldGroup, errors.New("ACTION_LOG_ARCHIVE_LOCATION must be of type string")
-		}
+	bytes, err := yaml.Marshal(fullConfig)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil, err
 	}
-	if value, ok := fullConfig["ACTION_LOG_ARCHIVE_PATH"]; ok {
-		newActionLogArchivingFieldGroup.ActionLogArchivePath, ok = value.(string)
-		if !ok {
-			return newActionLogArchivingFieldGroup, errors.New("ACTION_LOG_ARCHIVE_PATH must be of type string")
-		}
-	}
-	if value, ok := fullConfig["DISTRIBUTED_STORAGE_CONFIG"]; ok {
-		var err error
-		value := value.(map[string]interface{})
-		newActionLogArchivingFieldGroup.DistributedStorageConfig, err = NewDistributedStorageConfigStruct(value)
-		if err != nil {
-			return newActionLogArchivingFieldGroup, err
-		}
-	}
-	if value, ok := fullConfig["FEATURE_ACTION_LOG_ROTATION"]; ok {
-		newActionLogArchivingFieldGroup.FeatureActionLogRotation, ok = value.(bool)
-		if !ok {
-			return newActionLogArchivingFieldGroup, errors.New("FEATURE_ACTION_LOG_ROTATION must be of type bool")
-		}
+
+	err = yaml.Unmarshal(bytes, newActionLogArchivingFieldGroup)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil, err
 	}
 
 	return newActionLogArchivingFieldGroup, nil

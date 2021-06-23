@@ -577,7 +577,5 @@ func dumpStruct(i interface{}) string {
 	spew.Config.DisablePointerAddresses = true
 	spew.Config.SortKeys = true
 	spew.Config.DisableMethods = true
-	spew.Config.DisableTypes = true
-	spew.Config.DisableLengths = true
 	return spew.Sdump(i)
 }
