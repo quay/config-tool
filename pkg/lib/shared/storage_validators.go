@@ -3,10 +3,8 @@ package shared
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/url"
 	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
@@ -17,6 +15,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/ncw/swift"
+	log "github.com/sirupsen/logrus"
 )
 
 // ValidateStorage will validate a S3 storage connection.
@@ -66,8 +65,8 @@ func ValidateStorage(opts Options, storageName string, storageType string, args 
 		bucketName = args.BucketName
 
 		// Append port if present
-		if args.Port != 0 {
-			endpoint = endpoint + ":" + strconv.Itoa(args.Port)
+		if args.Port.IntValue() != 0 {
+			endpoint = endpoint + ":" + args.Port.String()
 		}
 
 		if len(errors) > 0 {
@@ -107,8 +106,8 @@ func ValidateStorage(opts Options, storageName string, storageType string, args 
 		} else {
 			endpoint = args.Host
 		}
-		if args.Port != 0 {
-			endpoint = endpoint + ":" + strconv.Itoa(args.Port)
+		if args.Port.IntValue() != 0 {
+			endpoint = endpoint + ":" + args.Port.String()
 		}
 
 		if len(errors) > 0 {
@@ -216,8 +215,8 @@ func ValidateStorage(opts Options, storageName string, storageType string, args 
 		} else {
 			endpoint = args.Host
 		}
-		if args.Port != 0 {
-			endpoint = endpoint + ":" + strconv.Itoa(args.Port)
+		if args.Port.IntValue() != 0 {
+			endpoint = endpoint + ":" + args.Port.String()
 		}
 
 		if len(errors) > 0 {
@@ -288,11 +287,11 @@ func ValidateStorage(opts Options, storageName string, storageType string, args 
 	case "SwiftStorage":
 
 		// Validate auth version
-		if args.SwiftAuthVersion != 1 && args.SwiftAuthVersion != 2 && args.SwiftAuthVersion != 3 {
+		if args.SwiftAuthVersion.IntValue() != 1 && args.SwiftAuthVersion.IntValue() != 2 && args.SwiftAuthVersion.IntValue() != 3 {
 			newError := ValidationError{
 				Tags:       []string{"DISTRIBUTED_STORAGE_CONFIG"},
 				FieldGroup: fgName,
-				Message:    strconv.Itoa(args.SwiftAuthVersion) + " must be either 1, 2, or 3.",
+				Message:    args.SwiftAuthVersion.String() + " must be either 1, 2, or 3.",
 			}
 			errors = append(errors, newError)
 		}
@@ -321,7 +320,7 @@ func ValidateStorage(opts Options, storageName string, storageType string, args 
 			return false, errors
 		}
 
-		if ok, err := validateSwift(opts, storageName, args.SwiftAuthVersion, args.SwiftUser, args.SwiftPassword, args.SwiftContainer, args.SwiftAuthURL, args.SwiftOsOptions, fgName); !ok {
+		if ok, err := validateSwift(opts, storageName, int(args.SwiftAuthVersion.IntValue()), args.SwiftUser, args.SwiftPassword, args.SwiftContainer, args.SwiftAuthURL, args.SwiftOsOptions, fgName); !ok {
 			errors = append(errors, err)
 		}
 	default:
@@ -375,7 +374,7 @@ func validateMinioGateway(opts Options, storageName, endpoint, accessKey, secret
 		return false, newError
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	found, err := st.BucketExists(ctx, bucketName)
@@ -418,7 +417,7 @@ func validateAzureGateway(opts Options, storageName, accountName, accountKey, co
 	serviceURL := azblob.NewServiceURL(*u, p)
 	containerURL := serviceURL.NewContainerURL(containerName)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	_, err = containerURL.GetAccountInfo(ctx)
