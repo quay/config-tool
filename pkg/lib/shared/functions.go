@@ -59,13 +59,18 @@ func LoadCerts(dir string) map[string][]byte {
 	// Get filenames in directory
 	certs := make(map[string][]byte)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if info.IsDir() || strings.Contains(path, "..") || (!strings.HasSuffix(path, ".crt") && !strings.HasSuffix(path, ".cert") && !strings.HasSuffix(path, ".pem")) {
 			return nil
 		}
 
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
-			return err
+			// It's possible different, unreadable files are here.
+			return nil
 		}
 
 		relativePath, err := filepath.Rel(dir, path)
