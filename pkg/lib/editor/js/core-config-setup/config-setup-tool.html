@@ -112,31 +112,10 @@
               <td>TLS:</td>
               <td>
                 <select ng-disabled="fieldGroupReadonly('HostSettings')" class="form-control" ng-model="mapped.TLS_SETTING">
-                  <option value="internal-tls">Custom certificates</option>
-                  <option value="external-tls">My own load balancer handles TLS (Not Recommended)</option>
-                  <option value="none">None (Not For Production)</option>
+                  <option value="internal-tls">Red Hat Quay handles TLS</option>
+                  <option value="external-tls">My own load balancer handles TLS</option>
+                  <option value="none" ng-if="!operatorEndpoint">None</option>
                 </select>
-
-                <div class="co-alert co-alert-danger" ng-if="mapped.TLS_SETTING == 'none'"
-                     style="margin-bottom: 20px; margin-top: 10px;">
-                  Running without TLS should not be used for production workloads!
-                </div>
-
-                <div class="co-alert co-alert-warning" ng-if="mapped.TLS_SETTING == 'external-tls'"
-                     style="margin-bottom: 20px; margin-top: 10px;">
-                  Terminating TLS outside of Red Hat Quay can result in unusual behavior if the external load balancer
-                  is not
-                  configured properly. <strong>This option is not recommended for simple setups</strong>. Please contact
-                  support if you encounter problems while using this option.
-                </div>
-
-                <div class="co-alert co-alert-info" ng-if="mapped.TLS_SETTING == 'internal-tls'"
-                     style="margin-bottom: 20px; margin-top: 10px;">
-                  Enabling TLS also enables <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security">HTTP
-                  Strict Transport Security</a>.<br />
-                  This prevents downgrade attacks and cookie theft, but browsers will reject all future insecure
-                  connections on this hostname.
-                </div>
 
                 <table class="config-table" ng-if="mapped.TLS_SETTING == 'internal-tls' && !fieldGroupReadonly('HostSettings')">
                   <tr>
@@ -388,7 +367,11 @@
             <p>If enabled, scheduled mirroring of repositories from registries will be available.
           </div>
 
-          <div class="config-bool-field" binding="config.FEATURE_REPO_MIRROR">
+          <div class="co-alert co-alert-danger" ng-if="fieldGroupReadonly('RepoMirror')">
+                The repository mirroring configuration is currently managed externally. <button class="btn btn-link" ng-click="changeFieldGroupReadonly('RepoMirror', false)">Edit fields</button>
+          </div>
+
+          <div class="config-bool-field" binding="config.FEATURE_REPO_MIRROR" is-readonly="fieldGroupReadonly('RepoMirror')">
             Enable Repository Mirroring
           </div>
           <div class="co-alert co-alert-info" ng-if="config.FEATURE_REPO_MIRROR" style="margin-top: 20px;">
@@ -396,7 +379,7 @@
             on setting up and running this service can be found at <a target="_blank" rel="noopener noreferrer" href="https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/manage_red_hat_quay/index#repository-mirroring" ng-safenewtab>Running Repository Mirroring Service</a>.
           </div>
 
-          <div class="config-bool-field" binding="config.REPO_MIRROR_TLS_VERIFY" ng-if="config.FEATURE_REPO_MIRROR">
+          <div class="config-bool-field" binding="config.REPO_MIRROR_TLS_VERIFY" is-readonly="fieldGroupReadonly('RepoMirror')" ng-if="config.FEATURE_REPO_MIRROR">
             Require HTTPS and verify certificates of Quay registry during mirror.
           </div>
         </div>

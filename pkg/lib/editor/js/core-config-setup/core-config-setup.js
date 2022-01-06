@@ -267,7 +267,6 @@ angular.module("quay-config")
           config["SETUP_COMPLETE"] = true;
           config["SECRET_KEY"] = generateDatabaseSecretKey();
           config["DATABASE_SECRET_KEY"] = generateDatabaseSecretKey();
-          config["BITTORRENT_FILENAME_PEPPER"] = generateDatabaseSecretKey();
           config["FEATURE_ACI_CONVERSION"] = false;
           config["USE_CDN"] = false;
           config["USERFILES_LOCATION"] = config["DISTRIBUTED_STORAGE_PREFERENCE"][0] || Object.keys(config["DISTRIBUTED_STORAGE_CONFIG"])[0] || "default";
@@ -604,17 +603,21 @@ angular.module("quay-config")
           switch (value) {
             case 'none':
               $scope.config['PREFERRED_URL_SCHEME'] = 'http';
+              delete $scope.certs["ssl.key"]
+              delete $scope.certs["ssl.cert"]
               delete $scope.config['EXTERNAL_TLS_TERMINATION'];
               return;
 
             case 'external-tls':
               $scope.config['PREFERRED_URL_SCHEME'] = 'https';
               $scope.config['EXTERNAL_TLS_TERMINATION'] = true;
+              delete $scope.certs["ssl.key"];
+              delete $scope.certs["ssl.cert"];
               return;
 
             case 'internal-tls':
               $scope.config['PREFERRED_URL_SCHEME'] = 'https';
-              delete $scope.config['EXTERNAL_TLS_TERMINATION'];
+              $scope.config['EXTERNAL_TLS_TERMINATION'] = false;
               return;
           }
         };
