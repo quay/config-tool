@@ -1,6 +1,7 @@
 import * as URI from 'urijs';
 import * as angular from 'angular';
 const forge = require('node-forge')
+import { X509 } from "jsrsasign"
 const JSZip = require('jszip')
 const yaml = require('js-yaml')
 const uuid = require('uuid')
@@ -264,11 +265,11 @@ angular.module("quay-config")
 
         const addSetupConfig = function (config) {
           config["SETUP_COMPLETE"] = true;
+          config["SECRET_KEY"] = generateDatabaseSecretKey();
           config["DATABASE_SECRET_KEY"] = generateDatabaseSecretKey();
-          config["BITTORRENT_FILENAME_PEPPER"] = generateDatabaseSecretKey();
           config["FEATURE_ACI_CONVERSION"] = false;
           config["USE_CDN"] = false;
-          config["USERFILES_LOCATION"] = "default";
+          config["USERFILES_LOCATION"] = config["DISTRIBUTED_STORAGE_PREFERENCE"][0] || Object.keys(config["DISTRIBUTED_STORAGE_CONFIG"])[0] || "default";
           config["TESTING"] = false;
           if (!("FEATURE_REQUIRE_TEAM_INVITE" in config)) {
             config["FEATURE_REQUIRE_TEAM_INVITE"] = true;
@@ -290,7 +291,14 @@ angular.module("quay-config")
         $scope.validateConfig = function() {
           $scope.validationStatus = 'validating';
 
-          if($scope.certs["database.pem"]){
+          if($scope.certs["database.pem"] && $scope.config["DB_URI"].startsWith("postgres")){
+            delete $scope.config["DB_CONNECTION_ARGS"]["ssl"];
+            $scope.config["DB_CONNECTION_ARGS"]["sslrootcert"] = "conf/stack/database.pem";
+            $scope.config["DB_CONNECTION_ARGS"]["sslmode"] = "verify-full"
+          } else if 
+            ($scope.certs["database.pem"] && $scope.config["DB_URI"].startsWith("mysql")){
+            delete $scope.config["DB_CONNECTION_ARGS"]["sslrootcert"];
+            delete $scope.config["DB_CONNECTION_ARGS"]["sslmode"];    
             $scope.config["DB_CONNECTION_ARGS"]["ssl"] = {}
             $scope.config["DB_CONNECTION_ARGS"]["ssl"]["ca"] = "conf/stack/database.pem";
           }
@@ -595,17 +603,21 @@ angular.module("quay-config")
           switch (value) {
             case 'none':
               $scope.config['PREFERRED_URL_SCHEME'] = 'http';
+              delete $scope.certs["ssl.key"]
+              delete $scope.certs["ssl.cert"]
               delete $scope.config['EXTERNAL_TLS_TERMINATION'];
               return;
 
             case 'external-tls':
               $scope.config['PREFERRED_URL_SCHEME'] = 'https';
               $scope.config['EXTERNAL_TLS_TERMINATION'] = true;
+              delete $scope.certs["ssl.key"];
+              delete $scope.certs["ssl.cert"];
               return;
 
             case 'internal-tls':
               $scope.config['PREFERRED_URL_SCHEME'] = 'https';
-              delete $scope.config['EXTERNAL_TLS_TERMINATION'];
+              $scope.config['EXTERNAL_TLS_TERMINATION'] = false;
               return;
           }
         };
@@ -1501,12 +1513,40 @@ angular.module("quay-config")
                   error: null,
                 };
               } catch (err) {
-                return {
-                  path: filename,
-                  names: [],
-                  expired: null,
-                  error: err,
-                };
+                // Retry with new library
+                try {
+                  const c = new X509();
+                  c.readCertPEM(atob(contents));
+                  const current = new Date();
+                  // This function returns a bad string, so we have to do some extra formatting to normalize it. 
+                  let originalDateString = "20"+c.getNotAfter()
+                  let formattedDateString = originalDateString.replace(
+                    /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/,
+                    "$1-$2-$3T$4:$5:$6"
+                  );
+                  const expired = current > Date.parse(formattedDateString);
+                  let names = c
+                    .getSubjectString()
+                    .split("/")
+                    .filter((attr) => attr.startsWith("CN"))
+                    .map((cn) => cn.split("=")[1]);
+                  if (c.getExtSubjectAltName2() != undefined) {
+                    names.concat(c.getExtSubjectAltName2().map((v) => v[1]));
+                  }
+                  return {
+                    path: filename,
+                    names: names,
+                    expired: expired,
+                    error: null,
+                  };
+                } catch(_) {
+                    return {
+                      path: filename,
+                      names: [],
+                      expired: null,
+                      error: err,
+                    };
+                }
               }
             });
           $scope.certsUploading = false;
