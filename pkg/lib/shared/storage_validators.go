@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/ncw/swift"
+	"github.com/ncw/swift/v2"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -407,6 +407,13 @@ func validateAzureGateway(opts Options, endpointURL, storageName, accountName, a
 func validateSwift(opts Options, storageName string, authVersion int, swiftUser, swiftPassword, containerName, authUrl string, osOptions map[string]interface{}, fgName string) (bool, ValidationError) {
 
 	var c swift.Connection
+	ctx := context.Background()
+	var region string
+	var ok bool
+	if region, ok = osOptions["region_name"].(string); ok {
+		region = osOptions["region_name"].(string)
+	}
+
 	switch authVersion {
 	case 1:
 		c = swift.Connection{
@@ -421,6 +428,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 			ApiKey:      swiftPassword,
 			AuthUrl:     authUrl,
 			AuthVersion: 2,
+			Region:      region,
 		}
 	case 3:
 
@@ -449,10 +457,11 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 			AuthVersion: 3,
 			Domain:      domain,
 			TenantId:    tenantId,
+			Region:      region,
 		}
 	}
 
-	err := c.Authenticate()
+	err := c.Authenticate(ctx)
 	if err != nil {
 		return false, ValidationError{
 			FieldGroup: fgName,
@@ -462,7 +471,7 @@ func validateSwift(opts Options, storageName string, authVersion int, swiftUser,
 	}
 
 	// List containers
-	containers, err := c.ContainerNames(nil)
+	containers, err := c.ContainerNames(ctx, nil)
 	if err != nil {
 		return false, ValidationError{
 			FieldGroup: fgName,

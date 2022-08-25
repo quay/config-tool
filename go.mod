@@ -24,7 +24,7 @@ require (
 	github.com/lib/pq v1.7.0
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/minio/minio-go/v7 v7.0.5
-	github.com/ncw/swift v1.0.52
+	github.com/ncw/swift/v2 v2.0.0
 	github.com/olekukonko/tablewriter v0.0.5-0.20200416053754-163badb3bac6
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect
