@@ -313,6 +313,13 @@ angular.module("quay-config")
             $scope.config["DB_CONNECTION_ARGS"]["ssl"]["ca"] = "conf/stack/database.pem";
           }
 
+          config["DISTRIBUTED_STORAGE_PREFERENCE"] = Object.keys(
+            config["DISTRIBUTED_STORAGE_CONFIG"]
+          ) || ["default"];
+
+          config["USERFILES_LOCATION"] =
+            config["DISTRIBUTED_STORAGE_CONFIG"][0] || "default";
+
           var errorDisplay = ApiService.errorDisplay(
               'Could not validate configuration. Please report this error.');
 
