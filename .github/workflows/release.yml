@@ -25,7 +25,7 @@ jobs:
           repository: quay/quay
       - name: Update the version in Quay Dockerfile
         run: sed -i "s/CONFIGTOOL_VERSION=v.*$/CONFIGTOOL_VERSION=${{ github.event.inputs.tag }}/" Dockerfile
-      - name: Create Pull Request k8s-operatorhub
+      - name: Create Pull Request Quay
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
