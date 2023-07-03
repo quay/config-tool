@@ -18,7 +18,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.DEPLOY_PAT }}
-          commit-message: "config: Update config tool to ${{ github.ref_name }}"
+          title: "build(deps): bump config-tool to ${{ github.ref_name }}"
+          commit-message: "build(deps): bump config-tool to ${{ github.ref_name }}"
           author: quay-devel <quay-devel@redhat.com>
           branch: quay/config-tool-pr
           delete-branch: true
