@@ -57,6 +57,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Workaround for dubious ownership issue
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build
         run: go build -v ./...
       - name: Tests
