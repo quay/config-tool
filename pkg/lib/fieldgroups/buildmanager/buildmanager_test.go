@@ -13,6 +13,7 @@ func TestValidateBuildManager(t *testing.T) {
 
 	before := []byte(`
 FEATURE_BUILD_SUPPORT: true
+BUILDMAN_HOSTNAME: builds.somequay.org:443
 BUILD_MANAGER: 
   - ephemeral
   - ALLOWED_WORKER_COUNT: 1
