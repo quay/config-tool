@@ -9,8 +9,9 @@ import (
 
 // BuildManagerFieldGroup represents the BuildManager config fields
 type BuildManagerFieldGroup struct {
-	FeatureBuildSupport bool                    `default:"" validate:"" json:"FEATURE_BUILD_SUPPORT" yaml:"FEATURE_BUILD_SUPPORT"`
-	BuildManagerConfig  *BuildManagerDefinition `default:"" validate:"" json:"BUILD_MANAGER,omitempty" yaml:"BUILD_MANAGER,omitempty"`
+	FeatureBuildSupport  bool                    `default:"" validate:"" json:"FEATURE_BUILD_SUPPORT" yaml:"FEATURE_BUILD_SUPPORT"`
+	BuildManagerHostname string                  `default:"" validate:"" json:"BUILDMAN_HOSTNAME" yaml:"BUILDMAN_HOSTNAME"`
+	BuildManagerConfig   *BuildManagerDefinition `default:"" validate:"" json:"BUILD_MANAGER,omitempty" yaml:"BUILD_MANAGER,omitempty"`
 }
 
 // BuildManagerDefinition represents a single storage configuration as a tuple (Name, Arguments)
